@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% block content %}
+
+<style>
+  body {
+    background: linear-gradient(135deg, #efebeb, #fef9fa);
+    animation: fadeIn 1.3s ease-in-out;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  .register-card {
+    background: rgba(246, 243, 243, 0.7);
+    padding: 35px;
+    border-radius: 20px;
+    backdrop-filter: blur(14px);
+    box-shadow: 0 8px 25px rgba(255, 150, 180, 0.3);
+    transition: 0.3s ease;
+  }
+
+  .register-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 35px rgba(255, 100, 150, 0.4);
+  }
+
+  h2 {
+    color: #37e2f5;
+    font-weight: bold;
+  }
+
+  .form-control {
+    border-radius: 15px;
+    border: 2px solid #ffb3cc;
+    transition: 0.3s;
+  }
+
+  .form-control:focus {
+    border-color: #f4abc667;
+    box-shadow: 0 0 10px rgba(255, 120, 160, 0.4);
+  }
+
+  .btn-pink {
+    background: #5fcadf;
+    color: white;
+    border: none;
+    font-weight: bold;
+    padding: 12px;
+    border-radius: 25px;
+    transition: 0.3s ease;
+  }
+
+  .btn-pink:hover {
+    background: #8dfdfb;
+    transform: scale(1.05);
+    box-shadow: 0 8px 22px rgba(150, 218, 237, 0.4);
+  }
+</style>
+
+<div class="row justify-content-center mt-4">
+  <div class="col-md-6">
+    <div class="register-card">
+
+      <h2 class="text-center mb-4"> Create Account</h2>
+
+      <form method="POST">
+
+        <div class="mb-3">
+          <label class="form-label"><b>Username</b></label>
+          <input type="text" class="form-control" name="username" required>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label"><b>Email</b></label>
+          <input type="email" class="form-control" name="email" required>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label"><b>Password</b></label>
+          <input type="password" class="form-control" name="password" required>
+        </div>
+
+        <button type="submit" class="btn btn-pink w-100">Sign Up</button>
+      </form>
+
+    </div>
+  </div>
+</div>
+
+{% endblock %}

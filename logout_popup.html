@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block content %}
+
+<script>
+Swal.fire({
+    title: '✨ Thank You! ✨',
+    html: `
+        <div style="font-size: 18px; line-height: 1.5;">
+            You logged out successfully.<br><br>
+            <b>You did amazing today! </b><br>
+            Keep smiling and take care of yourself 😊
+        </div>
+    `,
+    icon: 'success',
+    confirmButtonText: 'Go Home 💫',
+    confirmButtonColor: '#ff66c4',
+    background: '#fff0fa',
+    color: '#d63384',
+    timer: 10000,             // ⏳ stays for 10 seconds
+    timerProgressBar: true    // 🔥 progress bar enabled
+}).then(() => {
+    window.location.href = "{{ url_for('index') }}";
+});
+</script>
+
+{% endblock %}

@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+{% block content %}
+
+<style>
+  /* 🌸 Background Gradient */
+  body {
+    background: linear-gradient(135deg, #fefbfb, #f7f2f3d1);
+    animation: fadeIn 1.5s ease-in-out;
+  }
+
+  /* 🌸 Fade animation */
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  /* 🌸 Main card container */
+  .welcome-card {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(12px);
+    border-radius: 20px;
+    padding: 40px;
+    box-shadow: 0px 10px 25px rgba(255, 150, 180, 0.3);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  /* 🌸 Hover floating effect */
+  .welcome-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0px 12px 35px rgba(250, 95, 134, 0.82);
+  }
+
+  /* 🌸 Buttons Styling */
+  .btn-girl-primary {
+    background: #69f7f7;
+    border: none;
+    color: rgba(140, 162, 83, 0.703);
+    font-weight: bold;
+    transition: 0.3s ease;
+    padding: 12px 25px;
+    border-radius: 30px;
+  }
+
+  .btn-girl-primary:hover {
+    background: #03e1da;
+    transform: scale(1.05);
+    box-shadow: 0 8px 20px rgba(236, 5, 78, 0.4);
+  }
+
+  .btn-girl-outline {
+    border: 2px solid #168add;
+    color: #139ee4;
+    font-weight: bold;
+    transition: 0.3s ease;
+    padding: 12px 25px;
+    border-radius: 30px;
+  }
+
+  .btn-girl-outline:hover {
+    background: #1becb4;
+    color: rgb(190, 49, 49);
+    transform: scale(1.05);
+    box-shadow: 0 8px 20px rgba(255, 100, 150, 0.3);
+  }
+
+  /* 🌸 Header styles */
+  .welcome-card h1 {
+    font-weight: 700;
+    color: #2265eb;
+    text-shadow: 2px 2px rgba(239, 43, 43, 0.587);
+  }
+
+  .welcome-card p {
+    color: #07010c;
+    font-size: 1.2rem;
+  }
+</style>
+
+<div class="row justify-content-center mt-4">
+  <div class="col-md-8 text-center">
+    <div class="welcome-card">
+
+      <h1 class="mb-3"> Welcome to Emotion Detection  </h1>
+
+      <p class="lead mb-4">
+        Track your emotions in real-time, set goals, and download beautiful PDF reports.
+      </p>
+
+      <a href="{{ url_for('register') }}" class="btn btn-girl-primary btn-lg me-3">
+         Get Started
+      </a>
+
+      <a href="{{ url_for('login') }}" class="btn btn-girl-outline btn-lg">
+        Login
+      </a>
+
+    </div>
+  </div>
+</div>
+
+{% endblock %}

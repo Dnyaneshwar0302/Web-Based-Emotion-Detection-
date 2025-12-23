@@ -1,0 +1,319 @@
+{% extends "base.html" %}
+{% block content %}
+
+<!-- 🌸 Aesthetic Gradient Background -->
+<style>
+body {
+    background: linear-gradient(135deg, #ffd6e8, #e3d3ff, #d4f1ff);
+    background-size: 300% 300%;
+    animation: bgMove 12s ease infinite;
+}
+
+@keyframes bgMove {
+    0% {background-position: 0% 50%;}
+    50% {background-position:100% 50%;}
+    100% {background-position:0% 50%;}
+}
+
+/* Glassmorphism cards */
+.card {
+    border-radius: 20px;
+    background: rgba(255,255,255,0.45);
+    backdrop-filter: blur(14px);
+    border: 1px solid rgba(255,255,255,0.35);
+    transition: all 0.25s ease-in-out;
+}
+.card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 25px rgba(0,0,0,0.18);
+}
+
+/* Buttons */
+.btn {
+    border-radius: 50px;
+    font-weight: 600;
+    padding: 10px;
+    transition: 0.25s;
+}
+.btn-primary {
+    background: linear-gradient(135deg,#f6b5da,#a6eaf0);
+}
+.btn-primary:hover {
+    background:linear-gradient(135deg,#f6b5da,#9cec94);
+}
+
+/* Video */
+#video {
+    transform: scaleX(-1);
+    border-radius:16px;
+    border:3px solid #ffe3f2;
+}
+
+#currentEmotion {
+    color:#3f99ff;
+    font-size:2.3rem;
+}
+
+/* Modal */
+.glass-card {
+    background:rgba(255,255,255,0.6);
+    backdrop-filter:blur(14px);
+    border-radius:20px;
+}
+#breathingCircle {
+    width:110px;
+    height:110px;
+    margin:auto;
+    border-radius:50%;
+    background:radial-gradient(circle,#9ec9ff,#4b8bff);
+    animation:breatheAnimation 6s infinite ease-in-out;
+}
+@keyframes breatheAnimation {
+    0% {transform:scale(0.7);opacity:0.7;}
+    50% {transform:scale(1.2);opacity:1;}
+    100% {transform:scale(0.7);opacity:0.7;}
+}
+</style>
+
+<!-- ========= REMEDY MODAL ========= -->
+<div class="modal fade" id="remedyModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content glass-card">
+      <div class="modal-header">
+        <h5 class="modal-title" id="remedyModalTitle">Emotion Remedy</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+
+      <div class="modal-body">
+        <p id="remedyModalText" class="lead"></p>
+
+        <div id="breathingAnimation" class="text-center mt-3 d-none">
+          <div id="breathingCircle"></div>
+          <p class="mt-2 text-muted">Follow the breathing circle</p>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" id="startActivityBtn" class="btn btn-primary">Start Activity</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========= DASHBOARD ========= -->
+<div class="row g-4">
+  <div class="col-lg-7">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h4 class="card-title mb-3"> 🟣 Live Emotion Tracking</h4>
+
+        <div class="video-container mb-3">
+          <video id="video" autoplay playsinline></video>
+          <canvas id="canvas" class="d-none"></canvas>
+        </div>
+
+        <div class="d-flex align-items-center mb-3">
+          <button id="startTrackingBtn" class="btn btn-primary me-2">Start Tracking</button>
+          <button id="stopTrackingBtn" class="btn btn-outline-secondary">Stop</button>
+          <span class="ms-3 small text-muted" id="statusText">Camera off</span>
+        </div>
+
+        <div>
+          <h5 class="fw-bold">Current Emotion</h5>
+          <div id="currentEmotion">-</div>
+          <div id="currentConfidence" class="text-muted"></div>
+          <div id="currentTimestamp" class="small text-muted"></div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT SIDE -->
+  <div class="col-lg-5">
+
+    <!-- ========= GOAL SECTION (FIXED) ========= -->
+    <div class="card shadow-sm mb-4">
+      <div class="card-body">
+        <h4 class="card-title mb-3"> 🎯 Real-time Goal</h4>
+
+        <!-- YOUR GOAL IS ALWAYS HAPPY -->
+        <p class="fw-bold">Target Emotion: Happy 😊</p>
+
+        <form id="goalForm">
+          <label class="form-label">Target emotion</label>
+          <select class="form-select" id="targetEmotionSelect">
+            <option value="happy">Happy 😊</option>
+          </select>
+
+          <button type="submit" class="btn btn-primary w-100 mt-3">Save Goal</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- SUMMARY -->
+    <div class="card shadow-sm mb-4">
+      <div class="card-body">
+        <h4 class="card-title mb-3">⏱ Last 2 Minutes Summary</h4>
+
+        <ul class="list-group list-group-flush" id="weeklySummaryList">
+          <li class="list-group-item text-muted">No data yet.</li>
+        </ul>
+
+        <button class="btn btn-outline-primary w-100 mt-3" id="refreshSummaryBtn">Refresh Summary</button>
+
+        <a class="btn btn-outline-success w-100 mt-3" href="{{ url_for('report_pdf') }}">
+            📄 Download Report PDF
+        </a>
+      </div>
+    </div>
+
+    <!-- RECOMMENDATION -->
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h4 class="card-title mb-3"> 🌟 Latest Recommendation</h4>
+        <pre id="recommendationBox" class="small text-muted">Loading...</pre>
+        <button class="btn btn-outline-secondary w-100 mt-2" id="refreshRecBtn">Refresh Recommendation</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ========= SUMMARY SCRIPT ========= -->
+<script>
+function refreshSummary() {
+    fetch("/api/summary_2min")
+        .then(r => r.json())
+        .then(data => {
+            const list = document.getElementById("weeklySummaryList");
+            list.innerHTML = "";
+
+            if (!data.summary || data.summary.length === 0) {
+                list.innerHTML = `<li class="list-group-item text-muted">No data yet.</li>`;
+                return;
+            }
+
+            data.summary.forEach(item => {
+                list.innerHTML += `
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        ${item.emotion.toUpperCase()}
+                        <span class="badge rounded-pill">${item.count} (${item.percentage.toFixed(1)}%)</span>
+                    </li>`;
+            });
+        });
+}
+</script>
+
+<!-- ========= RECOMMENDATION SCRIPT ========= -->
+<script>
+function refreshRecommendation() {
+    fetch("/api/recommendation")
+        .then(r => r.json())
+        .then(data => {
+            document.getElementById("recommendationBox").textContent =
+                data.recommendation || "No recent emotion data.";
+        });
+}
+</script>
+
+<!-- ========= REMEDY SCRIPT ========= -->
+<script>
+let lastEmotion = null;
+
+function showRemedyPopup(emotion) {
+    if (emotion === lastEmotion) return;
+    lastEmotion = emotion;
+
+    fetch(`/api/remedy/${emotion}`)
+        .then(r => r.json())
+        .then(data => {
+            document.getElementById("remedyModalTitle").textContent = 
+                `Remedy for ${data.emotion.toUpperCase()}`;
+
+            document.getElementById("remedyModalText").textContent =
+                "• " + data.suggestions.join("\n• ");
+
+            const calming = ["sad","fear","angry","anxious","depressed"];
+            document.getElementById("breathingAnimation")
+                .classList.toggle("d-none", !calming.includes(emotion));
+
+            new bootstrap.Modal(document.getElementById("remedyModal")).show();
+        });
+}
+</script>
+
+{% endblock %}
+
+<!-- ========= LIVE CAMERA SCRIPT ========= -->
+<script>
+const video=document.getElementById("video");
+const canvas=document.getElementById("canvas");
+const ctx=canvas.getContext("2d");
+
+let trackingInterval=null;
+
+async function startCamera() {
+    try {
+        const stream=await navigator.mediaDevices.getUserMedia({
+            video:{facingMode:"user"}
+        });
+
+        video.srcObject=stream;
+        document.getElementById("statusText").textContent="Camera running";
+    } catch(err){
+        console.error("Camera error:",err);
+        document.getElementById("statusText").textContent="Camera failed";
+    }
+}
+
+function stopCamera(){
+    if(video.srcObject){
+        video.srcObject.getTracks().forEach(track=>track.stop());
+    }
+    video.srcObject=null;
+}
+
+async function captureAndSend(){
+    if(!video.srcObject)return;
+
+    canvas.width=video.videoWidth;
+    canvas.height=video.videoHeight;
+    ctx.drawImage(video,0,0);
+
+    const dataURL=canvas.toDataURL("image/jpeg");
+
+    const response=await fetch("/api/detect_emotion",{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({image:dataURL})
+    });
+
+    const result=await response.json();
+
+    if(result.emotion){
+        document.getElementById("currentEmotion").textContent=result.emotion.toUpperCase();
+        document.getElementById("currentConfidence").textContent=
+            "Confidence: "+(result.confidence*100).toFixed(1)+"%";
+
+        document.getElementById("currentTimestamp").textContent=
+            "Updated: "+new Date().toLocaleTimeString();
+
+        showRemedyPopup(result.emotion.toLowerCase());
+        refreshSummary();
+        refreshRecommendation();
+    }
+}
+
+document.getElementById("startTrackingBtn").addEventListener("click",()=>{
+    startCamera();
+    if(!trackingInterval)trackingInterval=setInterval(captureAndSend,2000);
+});
+
+document.getElementById("stopTrackingBtn").addEventListener("click",()=>{
+    stopCamera();
+    clearInterval(trackingInterval);
+    trackingInterval=null;
+});
+</script>

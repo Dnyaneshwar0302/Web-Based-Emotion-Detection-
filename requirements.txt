@@ -1,0 +1,8 @@
+flask
+flask_sqlalchemy
+flask_login
+opencv-python
+numpy
+Pillow
+deepface
+reportlab
